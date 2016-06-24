@@ -83,7 +83,7 @@ class OrganizationMembershipsController < ApplicationController
     end
 
     def id_params
-      params[:filter][:id].split(",")
+      params.require(:filter).require(:id).split(",")
     end
 
     def organization_memberships

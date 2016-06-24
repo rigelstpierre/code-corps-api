@@ -16,14 +16,23 @@ describe "OrganizationMemberships API" do
         create(:organization_membership, organization: organization, id: 3)
       end
 
+      def make_request(params = {})
+        get "#{host}/organization_memberships", params
+      end
+
+      it "requires the id filter" do
+        make_request
+        expect(last_response.status).to eq 400 # bad request
+      end
+
       it "works" do
-        get "#{host}/organization_memberships", filter: { id: "1,2" }
+        make_request(filter: { id: "1,2" })
         expect(last_response.status).to eq 200
         expect(json).
           to serialize_collection(OrganizationMembership.find([1, 2])).
           with(OrganizationMembershipSerializer)
 
-        get "#{host}/organization_memberships", filter: { id: "2,3" }
+        make_request(filter: { id: "2,3" })
         expect(last_response.status).to eq 200
         expect(json).
           to serialize_collection(OrganizationMembership.find([2, 3])).
