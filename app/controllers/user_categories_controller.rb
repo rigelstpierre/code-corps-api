@@ -65,4 +65,4 @@ class UserCategoriesController < ApplicationController
     def id_params
       params.try(:fetch, :filter, nil).try(:fetch, :id, nil).try(:split, ",")
     end
-  end
+end
