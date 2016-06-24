@@ -31,7 +31,7 @@ class PostsController < ApplicationController
     post = find_post!
     authorize post
 
-    render json: post#, include: [:comments, :post_user_mentions, :comment_user_mentions]
+    render json: post #, include: [:comments, :post_user_mentions, :comment_user_mentions]
   end
 
   def create
@@ -101,21 +101,20 @@ class PostsController < ApplicationController
 
     def find_post!
       project = find_project!
-      Post.includes(comments: :user).
+      project.posts.
         includes(:post_user_mentions, :comment_user_mentions).
-        find_by!(project: project, number: post_id)
+        find_by!(number: post_id)
     end
 
     def find_posts!
       project = find_project!
 
-      Post.
+      project.posts.
         includes(:user).
-        includes(:project).
         includes(comments: :user).
         includes(:post_user_mentions).
         includes(:comment_user_mentions).
-        where(filter_params.merge(project: project)).
+        where(filter_params).
         page(page_number).
         per(page_size)
     end

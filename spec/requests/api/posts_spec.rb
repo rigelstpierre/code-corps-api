@@ -155,8 +155,7 @@ describe "Posts API" do
 
       it "returns the post, properly serialized, with users, comments and mentions included" do
         expect(json).to serialize_object(Post.last).
-          with(PostSerializer).
-          with_includes %w(users comments post_user_mentions comment_user_mentions comments_count)
+          with(PostSerializer)
       end
     end
   end
