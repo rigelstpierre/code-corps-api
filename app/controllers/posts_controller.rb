@@ -23,6 +23,13 @@ class PostsController < ApplicationController
 
   def index
     authorize Post
+    includes = [:comments, :post_user_mentions, :comment_user_mentions, :user, :project]
+    posts = Post.includes(includes).where(id: id_params)
+    render json: posts
+  end
+
+  def project_index
+    authorize Post
     posts = find_posts!
     render json: posts, meta: meta_for(post_count), each_serializer: PostSerializer
   end
@@ -84,7 +91,7 @@ class PostsController < ApplicationController
       filter_params = {}
       filter_params[:post_type] = params[:post_type].split(",") if params[:post_type]
       filter_params[:status] = params[:status] if params[:status]
-      filter_params[:id] = id_params if params.fetch(:filter, {})[:id]
+      filter_params[:id] = id_params if coalesce?
       filter_params
     end
 
@@ -120,8 +127,12 @@ class PostsController < ApplicationController
         per(page_size)
     end
 
+    def coalesce?
+      params.fetch(:filter, {})[:id].present?
+    end
+
     def id_params
-      params[:filter][:id].split(",")
+      params.require(:filter).require(:id).split(",")
     end
 
     def post_count

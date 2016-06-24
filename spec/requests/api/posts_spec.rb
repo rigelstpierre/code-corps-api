@@ -1,6 +1,31 @@
 require "rails_helper"
 
 describe "Posts API" do
+  describe "GET /posts" do
+    before do
+      create(:post, id: 1)
+      create(:post, id: 2)
+      create(:post, id: 3)
+    end
+
+    def make_request(params = {})
+      get "#{host}/posts", params
+    end
+
+    it "requires the id filter" do
+      make_request
+      expect(last_response.status).to eq 400 # bad request
+    end
+
+    it "returns a collection of posts based on specified ids" do
+      make_request(filter: { id: "1,2" })
+      expect(last_response.status).to eq 200
+      expect(json).
+        to serialize_collection(Post.where(id: [1, 2])).
+        with(PostSerializer)
+    end
+  end
+
   context "GET /projects/:id/posts" do
     context "when the project doesn't exist" do
       it "responds with a 404" do

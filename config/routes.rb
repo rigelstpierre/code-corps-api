@@ -24,7 +24,7 @@ Rails.application.routes.draw do
 
     get "ping", to: "ping#index"
 
-    resources :posts, only: [:create, :update] do
+    resources :posts, only: [:index, :create, :update] do
       get "comments", to: "comments#post_index"
     end
 
@@ -36,8 +36,10 @@ Rails.application.routes.draw do
     resources :preview_user_mentions, only: [:index]
 
     resources :projects, only: [:index, :create, :update] do
-      resources :posts, only: [:index, :show]
+      get "posts", to: "posts#project_index"
+      resources :posts, only: [:show]
     end
+
     resources :project_categories, only: [:create, :destroy]
     resources :project_roles, only: [:create, :destroy]
     resources :project_skills, only: [:create, :destroy]
