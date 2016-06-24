@@ -31,7 +31,7 @@ class PostsController < ApplicationController
     post = find_post!
     authorize post
 
-    render json: post, include: [:comments, :post_user_mentions, :comment_user_mentions]
+    render json: post#, include: [:comments, :post_user_mentions, :comment_user_mentions]
   end
 
   def create

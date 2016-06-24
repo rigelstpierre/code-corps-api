@@ -12,6 +12,14 @@
 class UserCategoriesController < ApplicationController
   before_action :doorkeeper_authorize!, only: [:create, :destroy]
 
+  def index
+    authorize UserCategory
+
+    user_categories = UserCategory.where(id: id_params)
+
+    render json: user_categories
+  end
+
   def show
     user_category = UserCategory.find(params[:id])
 
@@ -53,4 +61,8 @@ class UserCategoriesController < ApplicationController
         parse_params(params, only: [:category])
       )
     end
-end
+
+    def id_params
+      params.try(:fetch, :filter, nil).try(:fetch, :id, nil).try(:split, ",")
+    end
+  end

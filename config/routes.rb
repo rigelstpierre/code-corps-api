@@ -18,9 +18,9 @@ Rails.application.routes.draw do
     resources :github_repositories, only: [:create]
 
     resources :organizations, only: [:index, :show, :create, :update] do
-      get "memberships", to: "organization_memberships#index"
+      get "memberships", to: "organization_memberships#organization_index"
     end
-    resources :organization_memberships, only: [:show, :create, :update, :destroy]
+    resources :organization_memberships, only: [:index, :show, :create, :update, :destroy]
 
     get "ping", to: "ping#index"
 
@@ -59,7 +59,7 @@ Rails.application.routes.draw do
       post :forgot_password
     end
 
-    resources :user_categories, only: [:show, :create, :destroy]
+    resources :user_categories, only: [:index, :show, :create, :destroy]
     resources :user_roles, only: [:show, :create, :destroy]
     resources :user_skills, only: [:index, :show, :create, :destroy]
 

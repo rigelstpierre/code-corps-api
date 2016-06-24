@@ -13,8 +13,18 @@
 class OrganizationMembershipsController < ApplicationController
   before_action :doorkeeper_authorize!, only: [:create, :update, :destroy]
 
-  # /organizations/:id/memberships
   def index
+    organization_memberships = OrganizationMembership.includes(
+      :member, :organization
+    ).where(id: id_params)
+
+    authorize organization_memberships
+
+    render json: organization_memberships
+  end
+
+  # /organizations/:id/memberships
+  def organization_index
     authorize organization_memberships
     render json: organization_memberships,
            meta: meta_for(organization_membership_count),

@@ -6,6 +6,32 @@ require "rails_helper"
 # - not allowed
 # - successful
 describe "OrganizationMemberships API" do
+  context "GET /organization_memberships" do
+    describe "coalesce find requests" do
+      let(:organization) { create(:organization) }
+
+      before do
+        create(:organization_membership, organization: organization, id: 1)
+        create(:organization_membership, organization: organization, id: 2)
+        create(:organization_membership, organization: organization, id: 3)
+      end
+
+      it "works" do
+        get "#{host}/organization_memberships", filter: { id: "1,2" }
+        expect(last_response.status).to eq 200
+        expect(json).
+          to serialize_collection(OrganizationMembership.find([1, 2])).
+          with(OrganizationMembershipSerializer)
+
+        get "#{host}/organization_memberships", filter: { id: "2,3" }
+        expect(last_response.status).to eq 200
+        expect(json).
+          to serialize_collection(OrganizationMembership.find([2, 3])).
+          with(OrganizationMembershipSerializer)
+      end
+    end
+  end
+
   context "GET /organization_memberships/:id" do
     context "when the organization_membership doesn't exist" do
       it "responds with a 404" do
