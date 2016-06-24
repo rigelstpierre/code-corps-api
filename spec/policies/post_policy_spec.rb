@@ -12,7 +12,7 @@ describe PostPolicy do
   let(:owner_user) { create(:user) }
 
   let(:idea_post) { create(:post, post_type: "idea", project: project) }
-  let(:ask_post) { create(:post, post_type: "task", project: project) }
+  let(:task_post) { create(:post, post_type: "task", project: project) }
   let(:issue_post) { create(:post, post_type: "issue", project: project) }
 
   before do
@@ -87,7 +87,7 @@ describe PostPolicy do
     context "as an anonymous user" do
       it "is not permitted to create any type of post" do
         expect(subject).to_not permit(nil, issue_post)
-        expect(subject).to_not permit(nil, task)
+        expect(subject).to_not permit(nil, task_post)
         expect(subject).to_not permit(nil, idea_post)
       end
     end
