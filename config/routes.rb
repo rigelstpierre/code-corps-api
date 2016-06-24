@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   constraints subdomain: "api" do
     resources :categories, only: [:index, :show, :create]
 
-    resources :comments, only: [:show, :create, :update]
+    resources :comments, only: [:index, :show, :create, :update]
     resources :comment_images, only: [:create]
     resources :comment_user_mentions, only: [:index]
 
@@ -25,8 +25,9 @@ Rails.application.routes.draw do
     get "ping", to: "ping#index"
 
     resources :posts, only: [:create, :update] do
-      resources :comments, only: [:index]
+      get "comments", to: "comments#post_index"
     end
+
     resources :post_images, only: [:create]
     resources :post_likes, only: [:create, :destroy]
     resources :post_user_mentions, only: [:index]
