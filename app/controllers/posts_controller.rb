@@ -31,7 +31,7 @@ class PostsController < ApplicationController
     post = find_post!
     authorize post
 
-    render json: post #, include: [:comments, :post_user_mentions, :comment_user_mentions]
+    render json: post # include: [:comments, :post_user_mentions, :comment_user_mentions]
   end
 
   def create
@@ -84,6 +84,7 @@ class PostsController < ApplicationController
       filter_params = {}
       filter_params[:post_type] = params[:post_type].split(",") if params[:post_type]
       filter_params[:status] = params[:status] if params[:status]
+      filter_params[:id] = id_params if params.fetch(:filter, {})[:id]
       filter_params
     end
 
@@ -119,7 +120,12 @@ class PostsController < ApplicationController
         per(page_size)
     end
 
+    def id_params
+      params[:filter][:id].split(",")
+    end
+
     def post_count
-      Post.where(filter_params.merge(project_id: project_id)).count
+      project = find_project!
+      project.posts.where(filter_params).count
     end
 end

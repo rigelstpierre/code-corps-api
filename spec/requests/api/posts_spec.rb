@@ -118,6 +118,24 @@ describe "Posts API" do
         expect(numbers_array).to eq [13, 12, 11, 10, 9, 8, 7, 6, 5, 4]
       end
     end
+
+    describe "coalesce find requests" do
+      let(:project) { create(:project) }
+
+      before do
+        create(:post, id: 1, project: project)
+        create(:post, id: 2, project: project)
+        create(:post, id: 3, project: project)
+      end
+
+      it "works" do
+        get "#{host}/projects/#{project.id}/posts", filter: { id: "2,3" }
+
+        expect(json).
+          to serialize_collection(project.posts.where(id: [2, 3])).
+          with(PostSerializer)
+      end
+    end
   end
 
   context "GET /projects/:project_id/posts/:number" do
